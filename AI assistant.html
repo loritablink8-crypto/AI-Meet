@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <title>MeetAI | AI Assistant</title>
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --ink: #172554;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --surface: #ffffff;
+      --page: #f4f7fc;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--page);
+      color: var(--ink);
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 245px;
+      flex: 0 0 245px;
+      padding: 24px 15px;
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+    }
+    .logo {
+      margin: 0 10px 30px;
+      color: var(--blue);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+    }
+    .nav-label {
+      margin: 0 12px 10px;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .sidebar nav { display: grid; gap: 6px; }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px;
+      color: #475569;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      color: var(--blue);
+      background: #eaf1ff;
+    }
+    .sidebar nav a.active { font-weight: 700; }
+    .nav-icon { width: 22px; text-align: center; }
+
+    .sidebar-note {
+      margin: 32px 5px 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .main { flex: 1; min-width: 0; padding: 30px; }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .page-header h1 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 30px); }
+    .page-header p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .header-badge {
+      padding: 8px 11px;
+      color: #166534;
+      background: #dcfce7;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 285px;
+      gap: 20px;
+      align-items: start;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .025);
+    }
+    .chat-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .bot-avatar {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border-radius: 14px;
+      background: #dbeafe;
+      font-size: 23px;
+    }
+    .chat-top h2 { margin: 0 0 5px; font-size: 16px; }
+    .chat-top p { margin: 0; color: var(--muted); font-size: 12px; }
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: #16a34a;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: min(54vh, 520px);
+      min-height: 340px;
+      overflow-y: auto;
+      padding: 22px;
+    }
+    .message {
+      max-width: 88%;
+      padding: 13px 15px;
+      border-radius: 14px;
+      line-height: 1.65;
+      font-size: 14px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .message.assistant { align-self: flex-start; background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 4px; }
+    .message.user { align-self: flex-end; background: var(--blue); color: white; border-bottom-right-radius: 4px; }
+    .message-label { display: block; margin-bottom: 6px; font-size: 10px; font-weight: 800; letter-spacing: .8px; opacity: .75; }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 20px 16px;
+    }
+    .quick-prompts button {
+      padding: 9px 12px;
+      color: var(--blue-dark);
+      background: white;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .quick-prompts button:hover { background: #eff6ff; }
+
+    .composer { padding: 16px 20px 20px; border-top: 1px solid var(--line); }
+    .composer textarea {
+      display: block;
+      width: 100%;
+      min-height: 95px;
+      max-height: 220px;
+      resize: vertical;
+      padding: 13px 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 11px;
+      outline: none;
+      line-height: 1.5;
+    }
+    .composer textarea:focus, .search-input:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px #dbeafe; }
+    .composer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .hint { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .send-btn, .primary-btn {
+      padding: 11px 16px;
+      color: white;
+      background: var(--blue);
+      border: 0;
+      border-radius: 9px;
+      font-weight: 700;
+    }
+    .send-btn:hover, .primary-btn:hover { background: var(--blue-dark); }
+    .send-btn:disabled { opacity: .6; cursor: wait; }
+
+    .tools-card { padding: 20px; }
+    .tools-card h2 { margin: 0 0 8px; font-size: 18px; }
+    .tools-intro { margin: 0 0 17px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .tool {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 13px 11px;
+      margin-bottom: 9px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+    }
+    .tool:hover, .tool.selected { border-color: #93c5fd; background: #f8fbff; }
+    .tool-icon { font-size: 19px; }
+    .tool strong { display: block; margin-bottom: 4px; font-size: 13px; color: #1e293b; }
+    .tool small { display: block; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .clear-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 7px;
+      color: #475569;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+    }
+    .notice {
+      margin: 16px 0 0;
+      padding: 12px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      color: #92400e;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .footer-note { margin: 16px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: minmax(0, 1fr) 250px; }
+      .main { padding: 22px; }
+    }
+    @media (max-width: 850px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; flex-basis: auto; padding: 15px 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .logo { margin: 0 8px 14px; }
+      .sidebar nav { display: flex; flex-wrap: wrap; }
+      .sidebar nav a { padding: 9px 10px; }
+      .nav-label, .sidebar-note { display: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .tools-card { order: -1; }
+      .tool { width: calc(50% - 6px); display: inline-flex; vertical-align: top; }
+      .messages { height: 400px; }
+    }
+    @media (max-width: 520px) {
+      .main { padding: 17px 12px; }
+      .page-header { flex-direction: column; }
+      .header-badge { white-space: normal; }
+      .tool { width: 100%; }
+      .messages { min-height: 300px; padding: 15px; }
+      .message { max-width: 96%; }
+      .composer { padding: 13px; }
+      .composer-bottom { align-items: flex-start; flex-direction: column; }
+      .send-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">MeetAI</div>
+      <p class="nav-label">Workspace</p>
+      <nav aria-label="Main navigation">
+        <a href="index.html"><span class="nav-icon">📊</span>Dashboard</a>
+        <a href="meeting.html"><span class="nav-icon">🎥</span>Meetings</a>
+        <a href="transcripts.html"><span class="nav-icon">📝</span>Transcripts</a>
+        <a href="ai-assistant.html" class="active" aria-current="page"><span class="nav-icon">🤖</span>AI Assistant</a>
+        <a href="index.html"><span class="nav-icon">✅</span>My Tasks</a>
+        <a href="index.html"><span class="nav-icon">⚙️</span>Settings</a>
+      </nav>
+      <div class="sidebar-note">
+        <strong>Meet smarter.</strong><br>
+        Organize notes, identify follow-ups, and prepare meeting summaries in one workspace.
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>AI Assistant</h1>
+          <p>Your workspace for meeting notes, summaries, decisions, and action items.</p>
+        </div>
+        <span class="header-badge">● Demo mode · No AI API connected</span>
+      </header>
+
+      <div class="workspace">
+        <section class="card" aria-label="AI chat">
+          <div class="chat-top">
+            <div class="bot-avatar">🤖</div>
+            <div>
+              <h2>MeetAI Assistant</h2>
+              <p><span class="status-dot"></span><span id="assistantStatus">Ready to help</span></p>
+            </div>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite">
+            <div class="message assistant">
+              <span class="message-label">MEETAI ASSISTANT</span>
+              Hello! I can help you organize meeting notes, identify possible action items, and find decisions in text you provide.
+
+              Paste your notes below, then choose a tool. This version uses simple browser-side text processing; it is not connected to a real AI model yet.
+            </div>
+          </div>
+
+          <div class="quick-prompts">
+            <button type="button" data-prompt="summary">📝 Summarize notes</button>
+            <button type="button" data-prompt="tasks">✅ Extract action items</button>
+            <button type="button" data-prompt="decisions">💡 Find decisions</button>
+          </div>
+
+          <form class="composer" id="chatForm">
+            <label for="userInput" class="hint" style="display:block;margin-bottom:8px;">Your message or meeting notes</label>
+            <textarea id="userInput" maxlength="12000" placeholder="Example: The team agreed to launch on Friday. Alex will prepare the slides by Wednesday..." required></textarea>
+            <div class="composer-bottom">
+              <span class="hint">Do not paste confidential information into this demo.</span>
+              <button class="send-btn" id="sendButton" type="submit">Process notes ↗</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="card tools-card">
+          <h2>Assistant tools</h2>
+          <p class="tools-intro">Choose how you want to process the text in the message box.</p>
+
+          <button class="tool selected" type="button" data-tool="summary">
+            <span class="tool-icon">📝</span>
+            <span><strong>Meeting summary</strong><small>Show a short overview of the notes.</small></span>
+          </button>
+
+          <button class="tool" type="button" data-tool="tasks">
+            <span class="tool-icon">✅</span>
+            <span><strong>Action items</strong><small>Find sentences that may describe tasks.</small></span>
+          </button>
+
+          <button class="tool" type="button" data-tool="decisions">
+            <span class="tool-icon">💡</span>
+            <span><strong>Key decisions</strong><small>Find sentences mentioning decisions or agreements.</small></span>
+          </button>
+
+          <button class="tool" type="button" data-tool="questions">
+            <span class="tool-icon">❓</span>
+            <span><strong>Ask about notes</strong><small>Get guidance on the text you provide.</small></span>
+          </button>
+
+          <button class="clear-btn" type="button" id="clearChat">Clear conversation</button>
+
+          <div class="notice">
+            <strong>Demo limitation</strong><br>
+            Summaries and extractions use simple rules, so they can miss context or make mistakes. Real AI responses require a secure backend connection.
+          </div>
+          <p class="footer-note">Conversation content stays in this page and is not saved after refresh.</p>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      const messages = document.getElementById("messages");
+      const form = document.getElementById("chatForm");
+      const input = document.getElementById("userInput");
+      const sendButton = document.getElementById("sendButton");
+      const status = document.getElementById("assistantStatus");
+      const toolButtons = [...document.querySelectorAll("[data-tool]")];
+      let selectedTool = "summary";
+
+      function addMessage(text, role) {
+        const bubble = document.createElement("div");
+        bubble.className = `message ${role}`;
+        const label = document.createElement("span");
+        label.className = "message-label";
+        label.textContent = role === "user" ? "YOU" : "MEETAI ASSISTANT";
+        const content = document.createElement("span");
+        content.textContent = text;
+        bubble.append(label, content);
+        messages.appendChild(bubble);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function splitSentences(text) {
+        return (text.match(/[^.!?]+[.!?]?/g) || [])
+          .map(sentence => sentence.trim())
+          .filter(Boolean);
+      }
+
+      function makeSummary(text) {
+        const sentences = splitSentences(text);
+        if (!sentences.length) return "Please provide some meeting notes to summarize.";
+        return "SUMMARY (simple text-based draft)\n\n" +
+          sentences.slice(0, 5).map(sentence => "• " + sentence).join("\n") +
+          (sentences.length > 5 ? `\n\n(${sentences.length - 5} more sentence(s) were left out.)` : "");
+      }
+
+      function makeTasks(text) {
+        const keywords = /\b(todo|action item|task|must|need to|should|will|responsible for|deadline|follow up|prepare|send|complete|finish|submit|review|contact|by monday|by tuesday|by wednesday|by thursday|by friday)\b/i;
+        const tasks = splitSentences(text).filter(sentence => keywords.test(sentence));
+        if (!tasks.length) {
+          return "No likely action items found by the demo rules.\n\nTry adding notes with phrases such as “Alex will prepare the report by Friday.”";
+        }
+        return "POSSIBLE ACTION ITEMS (please verify)\n\n" +
+          tasks.map((task, index) => `${index + 1}. ${task}`).join("\n");
+      }
+
+      function makeDecisions(text) {
+        const keywords = /\b(decided|decision|agreed|approved|selected|chosen|confirmed|concluded|will launch|we chose)\b/i;
+        const decisions = splitSentences(text).filter(sentence => keywords.test(sentence));
+        if (!decisions.length) {
+          return "No explicit decisions found by the demo rules.\n\nLook for phrases such as “the team agreed” or “we decided”.";
+        }
+        return "POSSIBLE KEY DECISIONS (please verify)\n\n" +
+          decisions.map(item => "• " + item).join("\n");
+      }
+
+      function answer(text, tool) {
+        if (tool === "summary") return makeSummary(text);
+        if (tool === "tasks") return makeTasks(text);
+        if (tool === "decisions") return makeDecisions(text);
+        return "This demo cannot answer general questions intelligently yet because it is not connected to an AI model.\n\nI can still summarize your notes or find possible tasks and decisions. Choose one of those tools and submit your text.";
+      }
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text) {
+          input.focus();
+          return;
+        }
+
+        addMessage(text, "user");
+        const tool = selectedTool;
+        input.value = "";
+        sendButton.disabled = true;
+        status.textContent = "Processing your notes…";
+
+        window.setTimeout(() => {
+          addMessage(answer(text, tool), "assistant");
+          sendButton.disabled = false;
+          status.textContent = "Ready to help";
+          input.focus();
+        }, 250);
+      });
+
+      toolButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          selectedTool = button.dataset.tool;
+          toolButtons.forEach(item => {
+            item.classList.toggle("selected", item === button);
+          });
+          const labels = {
+            summary: "Meeting summary selected",
+            tasks: "Action-item extraction selected",
+            decisions: "Key-decision extraction selected",
+            questions: "Ask about notes selected"
+          };
+          status.textContent = labels[selectedTool];
+          input.focus();
+        });
+      });
+
+      document.querySelectorAll("[data-prompt]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedTool = button.dataset.prompt;
+          toolButtons.forEach(item => {
+            item.classList.toggle("selected", item.dataset.tool === selectedTool);
+          });
+          input.focus();
+          input.placeholder = "Paste your meeting notes here, then click Process notes...";
+          status.textContent = "Selected: " + selectedTool;
+        });
+      });
+
+      document.getElementById("clearChat").addEventListener("click", () => {
+        if (!window.confirm("Clear this conversation?")) return;
+        messages.replaceChildren();
+        addMessage("Conversation cleared. Paste meeting notes and choose a tool to begin.", "assistant");
+        status.textContent = "Ready to help";
+      });
+    })();
+  </script>
+</body>
+</html>

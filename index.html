@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeetAI | Smart Meetings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body><aside class="sidebar">
+    <h2 class="logo">Meet<span>AI</span></h2>
+
+    <nav>
+        <a href="#" class="nav-link active">🏠 Dashboard</a>
+        <a href="#" class="nav-link">🎥 Meetings</a>
+        <a href="#" class="nav-link">📝 Transcripts</a>
+        <a href="#" class="nav-link">🤖 AI Assistant</a>
+        <a href="#" class="nav-link">✅ My Tasks</a>
+        <a href="#" class="nav-link">⚙️ Settings</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="avatar">L</div>
+        <div>
+            <strong>Welcome, Lorita</strong>
+            <p>Free Account</p>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+
+    <header class="topbar">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Manage your meetings with AI.</p>
+        </div>
+
+        <div class="topbar-actions">
+            <button class="notification" aria-label="Notifications">🔔</button>
+            <div class="avatar">L</div>
+        </div>
+    </header>
+
+    <section class="welcome">
+        <div>
+            <h2>Meet smarter. Work better. 👋</h2>
+            <p>Your meetings, notes and tasks in one place.</p>
+
+            <div class="welcome-buttons">
+                <button class="btn-primary" id="startMeeting">
+                    🎥 Start a Meeting
+                </button>
+
+                <button class="btn-secondary" id="joinMeeting">
+                    + Join a Meeting
+                </button>
+            </div>
+        </div>
+
+        <div class="welcome-icon">🤖</div>
+    </section>
+
+    <section class="stats-grid">
+
+        <article class="stat-card">
+            <div class="stat-icon blue">🎥</div>
+            <p>Total Meetings</p>
+            <h2 id="meetingCount">12</h2>
+            <span>Meetings created</span>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon purple">🤖</div>
+            <p>AI Summaries</p>
+            <h2>8</h2>
+            <span>Summaries generated</span>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <p>Completed Tasks</p>
+            <h2 id="completedCount">5</h2>
+            <span>Tasks completed</span>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon orange">⏱️</div>
+            <p>Hours Saved</p>
+            <h2>4.5</h2>
+            <span>Estimated by AI</span>
+        </article>
+
+    </section>
+
+    <section class="content-grid">
+
+        <article class="panel">
+            <div class="panel-header">
+                <h2>Recent Meetings</h2>
+                <button class="text-button" id="viewMeetings">View all</button>
+            </div>
+
+            <div class="meeting-item">
+                <div class="meeting-icon">🎓</div>
+                <div class="meeting-info">
+                    <h3>Project Discussion</h3>
+                    <p>Today · 10:00 AM</p>
+                </div>
+                <span class="status completed">Completed</span>
+            </div>
+
+            <div class="meeting-item">
+                <div class="meeting-icon">💻</div>
+                <div class="meeting-info">
+                    <h3>Web Development</h3>
+                    <p>Today · 2:00 PM</p>
+                </div>
+                <span class="status upcoming">Upcoming</span>
+            </div>
+
+            <div class="meeting-item">
+                <div class="meeting-icon">👥</div>
+                <div class="meeting-info">
+                    <h3>Team Collaboration</h3>
+                    <p>Tomorrow · 9:00 AM</p>
+                </div>
+                <span class="status upcoming">Upcoming</span>
+            </div>
+        </article>
+
+        <article class="panel ai-panel">
+            <div class="panel-header">
+                <h2>🤖 MeetAI Assistant</h2>
+                <span class="online-dot">● Online</span>
+            </div>
+
+            <p class="ai-description">
+                Your intelligent meeting assistant is ready to help.
+            </p>
+
+            <div class="ai-feature">
+                <span>📝</span>
+                <div>
+                    <h3>Meeting Summaries</h3>
+                    <p>Turn long discussions into short notes.</p>
+                </div>
+            </div>
+
+            <div class="ai-feature">
+                <span>🎙️</span>
+                <div>
+                    <h3>Transcription</h3>
+                    <p>Convert spoken words into text.</p>
+                </div>
+            </div>
+
+            <div class="ai-feature">
+                <span>✅</span>
+                <div>
+                    <h3>Smart Tasks</h3>
+                    <p>Organize decisions and action items.</p>
+                </div>
+            </div>
+
+            <button class="btn-primary full-width" id="askAI">
+                Explore AI Assistant →
+            </button>
+        </article>
+
+    </section>
+
+    <footer>
+        <p>© 2026 MeetAI. Meet smarter, achieve more.</p>
+    </footer>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>

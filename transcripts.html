@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeetAI | Transcripts</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fc;
+            color: #172554;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 0 10px 35px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #475569;
+            padding: 13px 12px;
+            margin-bottom: 7px;
+            border-radius: 9px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #eaf1ff;
+            color: #2563eb;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .topbar p {
+            color: #64748b;
+        }
+
+        .button {
+            border: none;
+            padding: 12px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #2563eb;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card p {
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h2 {
+            font-size: 27px;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .toolbar input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .transcript-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .transcript-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 17px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .transcript-item h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .transcript-item p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px 10px;
+            color: #64748b;
+            display: none;
+        }
+
+        .note {
+            margin-top: 18px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                width: 150px;
+                padding: 15px 8px;
+            }
+
+            .main {
+                padding: 18px 12px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .transcript-item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .sidebar a {
+                display: inline-block;
+                padding: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <div class="logo">MeetAI</div>
+
+        <a href="index.html">📊 Dashboard</a>
+        <a href="meeting.html">🎥 Meetings</a>
+        <a href="transcripts.html" class="active">📝 Transcripts</a>
+        <a href="index.html">🤖 AI Assistant</a>
+        <a href="index.html">✅ My Tasks</a>
+        <a href="index.html">⚙️ Settings</a>
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div>
+                <h1>Meeting Transcripts</h1>
+                <p>Review, search, and download your meeting notes.</p>
+            </div>
+
+            <button class="button" id="exportAll">
+                Export All
+            </button>
+        </div>
+
+        <section class="stats">
+            <div class="stat-card">
+                <p>Total Transcripts</p>
+                <h2 id="totalCount">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Total Words</p>
+                <h2 id="wordCount">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Saved Transcripts</p>
+                <h2 id="savedCount">0</h2>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>Your Transcripts</h2>
+
+            <div class="toolbar">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search transcripts..."
+                    aria-label="Search transcripts"
+                >
+
+                <button class="button" id="newTranscript">
+                    + Add Transcript
+                </button>
+            </div>
+
+            <div class="transcript-list" id="transcriptList"></div>
+
+            <div class="empty" id="emptyMessage">
+                <h3>No transcripts found</h3>
+                <p>Add a transcript or try another search.</p>
+            </div>
+
+            <p class="note">
+                Your transcripts are stored in this browser for this demo.
+                They are not automatically generated from your video meetings yet.
+            </p>
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+    const STORAGE_KEY = "meetai_transcripts";
+
+    function loadTranscripts() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+            return Array.isArray(saved) ? saved : [];
+        } catch {
+            return [];
+        }
+    }
+
+    let transcripts = loadTranscripts();
+
+    function saveTranscripts() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(transcripts));
+    }
+
+    function countWords(text) {
+        return text.trim() ? text.trim().split(/\s+/).length : 0;
+    }
+
+    function updateStats() {
+        document.getElementById("totalCount").textContent = transcripts.length;
+
+        document.getElementById("wordCount").textContent =
+            transcripts.reduce((total, item) => total + countWords(item.content), 0);
+
+        document.getElementById("savedCount").textContent = transcripts.length;
+    }
+
+    function downloadText(filename, text) {
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    function renderTranscripts() {
+        const list = document.getElementById("transcriptList");
+        const search = document.getElementById("searchInput").value.toLowerCase();
+
+        list.replaceChildren();
+
+        const filtered = transcripts.filter(item =>
+            (item.title + " " + item.content).toLowerCase().includes(search)
+        );
+
+        document.getElementById("emptyMessage").style.display =
+            filtered.length ? "none" : "block";
+
+        filtered.forEach(item => {
+            const card = document.createElement("article");
+            card.className = "transcript-item";
+
+            const details = document.createElement("div");
+
+            const title = document.createElement("h3");
+            title.textContent = item.title;
+
+            const description = document.createElement("p");
+            description.textContent =
+                `${item.date} · ${countWords(item.content)} words`;
+
+            details.append(title, description);
+
+            const actions = document.createElement("div");
+            actions.className = "item-actions";
+
+            const viewButton = document.createElement("button");
+            viewButton.className = "button secondary";
+            viewButton.textContent = "View";
+            viewButton.addEventListener("click", () => {
+                alert(item.title + "\n\n" + item.content);
+            });
+
+            const downloadButton = document.createElement("button");
+            downloadButton.className = "button secondary";
+            downloadButton.textContent = "Download";
+            downloadButton.addEventListener("click", () => {
+                downloadText(
+                    item.title.replace(/[^a-z0-9_-]/gi, "_") + ".txt",
+                    item.content
+                );
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "button danger";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => {
+                if (confirm("Delete this transcript?")) {
+                    transcripts = transcripts.filter(t => t.id !== item.id);
+                    saveTranscripts();
+                    renderTranscripts();
+                    updateStats();
+                }
+            });
+
+            actions.append(viewButton, downloadButton, deleteButton);
+            card.append(details, actions);
+            list.appendChild(card);
+        });
+
+        updateStats();
+    }
+
+    document.getElementById("newTranscript").addEventListener("click", () => {
+        const title = prompt("Enter the meeting title:");
+
+        if (!title || !title.trim()) return;
+
+        const content = prompt("Paste or type the meeting transcript:");
+
+        if (content === null || !content.trim()) return;
+
+        transcripts.unshift({
+            id: Date.now().toString(),
+            title: title.trim(),
+            content: content.trim(),
+            date: new Date().toLocaleDateString()
+        });
+
+        saveTranscripts();
+        renderTranscripts();
+    });
+
+    document.getElementById("searchInput").addEventListener("input", renderTranscripts);
+
+    document.getElementById("exportAll").addEventListener("click", () => {
+        if (!transcripts.length) {
+            alert("There are no transcripts to export yet.");
+            return;
+        }
+
+        const content = transcripts.map(item =>
+            `${item.title}\n${item.date}\n\n${item.content}\n\n--------------------\n`
+        ).join("\n");
+
+        downloadText("MeetAI_All_Transcripts.txt", content);
+    });
+
+    renderTranscripts();
+</script>
+
+</body>
+</html>
